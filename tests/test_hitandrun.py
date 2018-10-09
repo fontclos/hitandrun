@@ -45,7 +45,8 @@ class TestHitAndRun(unittest.TestCase):
         b = np.array([1, 1, 1, 1])
         x0 = np.array([-.5, -.5])
         polytope = Polytope(A=A, b=b)
-        hitandrun = HitAndRun(polytope=polytope, starting_point=x0)
+        hitandrun = HitAndRun(polytope=polytope, starting_point=x0,
+                              n_samples=100, thin=1)
         start = time.time()
         hitandrun.get_samples(n_samples=10000)
         end = time.time()

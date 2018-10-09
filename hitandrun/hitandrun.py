@@ -6,8 +6,10 @@ Oct 2018
 """
 import numpy as np
 from scipy.spatial.distance import norm
+import numba
 
 
+# @numba.jitclass
 class HitAndRun(object):
     """Hit-and-run sampler."""
 

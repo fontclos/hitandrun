@@ -5,8 +5,16 @@ Francesc Font-Clos
 Oct 2018
 """
 import numpy as np
+import numba
 
 
+@numba.jitclass([
+    ("A", numba.types.float64[:, :]),
+    ("b", numba.types.float64[:]),
+    ("auxiliar_points", numba.types.float64[:, :]),
+    ("dim", numba.types.int8),
+    ("nplanes", numba.types.int8)
+    ])
 class Polytope(object):
     """A polytope in H-representation."""
 
@@ -40,9 +48,13 @@ class Polytope(object):
 
     def _find_auxiliar_points_in_planes(self):
         """Find an auxiliar point for each plane."""
-        aux_points = [self._find_auxiliar_point(self.A[i],
-                                                self.b[i])
-                      for i in range(self.nplanes)]
+        # aux_points = [self._find_auxiliar_point(self.A[i],
+        #                                         self.b[i])
+        #               for i in range(self.nplanes)]
+        aux_points = np.array(shape=(self.nplanes, self.dim))
+        for i in range(self.nplanes):
+            aux_points_l.append(self._find_auxiliar_point(self.A[i], self.b[i]))
+        aux_points = np.array(aux_points_l)
         self.auxiliar_points = aux_points
 
     def _find_auxiliar_point(self, Ai, bi):

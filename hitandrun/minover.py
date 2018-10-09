@@ -5,8 +5,10 @@ Francesc Font-Clos
 Oct 2018
 """
 import numpy as np
+import numba
 
 
+# @numba.jitclass
 class MinOver(object):
     """MinOver solver."""
 
