@@ -6,7 +6,7 @@ from hitandrun.polytope import Polytope
 from hitandrun.minover import MinOver
 
 
-class TestHitAndRun(unittest.TestCase):
+class TestMinOver(unittest.TestCase):
     """Basic tests for hit and run."""
 
     def test_instantiate(self):
@@ -14,8 +14,8 @@ class TestHitAndRun(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, 1, 1, 1])
+                      [0, -1]], dtype=np.float32)
+        b = np.array([1, 1, 1, 1], dtype=np.float32)
         polytope = Polytope(A=A, b=b)
         minover = MinOver(polytope=polytope)
         self.assertTrue(isinstance(minover, MinOver))
