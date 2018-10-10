@@ -14,8 +14,8 @@ class TestMinOver(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]], dtype=np.float32)
-        b = np.array([1, 1, 1, 1], dtype=np.float32)
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, 1, 1, 1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
         minover = MinOver(polytope=polytope)
         self.assertTrue(isinstance(minover, MinOver))
@@ -25,11 +25,11 @@ class TestMinOver(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, 1, 1, 1])
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, 1, 1, 1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
         minover = MinOver(polytope=polytope)
-        x0 = np.array([-2, -2])
+        x0 = np.array([-2, -2], dtype=np.float64)
         point, convergence = minover.run(starting_point=x0)
         self.assertTrue(convergence)
 
@@ -38,11 +38,11 @@ class TestMinOver(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, 1, 1, 1])
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, 1, 1, 1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
         minover = MinOver(polytope=polytope)
-        x0 = np.array([-2, -2])
+        x0 = np.array([-2, -2], dtype=np.float64)
         point, convergence = minover.run(starting_point=x0, max_iters=1000,
                                          speed=1000)
         self.assertTrue(polytope.check_inside(point))

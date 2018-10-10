@@ -15,11 +15,15 @@ class TestHitAndRun(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]], dtype=np.float32)
-        b = np.array([1, 1, 1, 1], dtype=np.float32)
-        x0 = np.array([-.5, -.5], dtype=np.float32)
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, 1, 1, 1], dtype=np.float64)
+        x0 = np.array([-.5, -.5], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
-        hitandrun = HitAndRun(polytope=polytope, starting_point=x0)
+        hitandrun = HitAndRun(polytope=polytope,
+                              starting_point=x0,
+                              thin=1.0,
+                              n_samples=100
+                              )
         self.assertTrue(isinstance(hitandrun, HitAndRun))
 
     def test_sampling(self):
@@ -27,9 +31,9 @@ class TestHitAndRun(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, 1, 1, 1])
-        x0 = np.array([-.5, -.5])
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, 1, 1, 1], dtype=np.float64)
+        x0 = np.array([-.5, -.5], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
         hitandrun = HitAndRun(polytope=polytope, starting_point=x0)
         samples = hitandrun.get_samples(n_samples=100)
@@ -41,9 +45,9 @@ class TestHitAndRun(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, 1, 1, 1])
-        x0 = np.array([-.5, -.5])
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, 1, 1, 1], dtype=np.float64)
+        x0 = np.array([-.5, -.5], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
         hitandrun = HitAndRun(polytope=polytope, starting_point=x0,
                               n_samples=100, thin=1)

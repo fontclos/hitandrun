@@ -10,8 +10,8 @@ class TestPolytope(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]], dtype=np.float32)
-        b = np.array([1, -1, 1, -1], dtype=np.float32)
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, -1, 1, -1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
 
         self.assertTrue(isinstance(polytope, Polytope))
@@ -20,8 +20,8 @@ class TestPolytope(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]], dtype=np.float32)
-        b = np.array([1, -1, 1, -1], dtype=np.float32)
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, -1, 1, -1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
 
         self.assertEqual(polytope.dim, 2)
@@ -30,8 +30,8 @@ class TestPolytope(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, -1, 1, -1])
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, -1, 1, -1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
 
         self.assertEqual(polytope.nplanes, 4)
@@ -40,8 +40,8 @@ class TestPolytope(unittest.TestCase):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
-                      [0, -1]])
-        b = np.array([1, -1, 1, -1])
+                      [0, -1]], dtype=np.float64)
+        b = np.array([1, -1, 1, -1], dtype=np.float64)
         polytope = Polytope(A=A, b=b)
         checks = (polytope.auxiliar_points @ polytope.A.T) - b
         self.assertTrue(np.allclose(np.diag(checks), 0))

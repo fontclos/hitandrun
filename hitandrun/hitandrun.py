@@ -5,9 +5,24 @@ Francesc Font-Clos
 Oct 2018
 """
 import numpy as np
-from scipy.spatial.distance import norm
+
+from numba import jitclass
+from numba import int64, float64
+from .polytope import Polytope
+
+spec = [
+    ("polytope", Polytope.class_type),
+    ("starting_point", float64[:]),
+    ("n_samples", int64),
+    ("thin", float64),
+    ("current", float64[:]),
+    ("samples", float64[:, :]),
+    ("lambdas", float64[:]),
+    ("direction", float64[:])
+]
 
 
+@jitclass(spec)
 class HitAndRun(object):
     """Hit-and-run sampler."""
 
@@ -40,9 +55,12 @@ class HitAndRun(object):
         # place starting point as current point
         self.current = starting_point
         # set a starting random direction
+        self.direction = np.zeros(4, dtype=np.float64)
+#        self.direction = np.zeros(self.polytope.dim, dtype=np.float64)
         self._set_random_direction()
         # create empty list of samples
         self.samples = []
+        self.lambdas = np.zeros(self.polytope.nplanes)
 
     def get_samples(self, n_samples=None, thin=None):
         """Get the requested samples."""
@@ -102,7 +120,9 @@ class HitAndRun(object):
     def _set_random_direction(self):
         """Set a unitary random direction in which to travel."""
         direction = np.random.randn(self.polytope.dim)
-        self.direction = direction / norm(direction)
+#        direction = np.random.randn(2)
+        norm = np.sqrt(np.sum(direction**2))
+        self.direction = direction / norm
 
     def _add_current_to_samples(self):
         self.samples.append(list(self.current))
