@@ -10,7 +10,7 @@ from hitandrun.polytope import Polytope
 class TestHitAndRun(unittest.TestCase):
     """Basic tests for hit and run."""
 
-    def test_instantiate(self):
+    def test_hitandrun_instantiate(self):
         """Test if HitAndRun object can be created."""
         A = np.array([[1, 0],
                       [-1, 0],
@@ -26,7 +26,7 @@ class TestHitAndRun(unittest.TestCase):
                               )
         self.assertTrue(isinstance(hitandrun, HitAndRun))
 
-    def test_sampling(self):
+    def test_hitandrun_sampling(self):
         """Test if we can get samples."""
         A = np.array([[1, 0],
                       [-1, 0],
@@ -40,7 +40,7 @@ class TestHitAndRun(unittest.TestCase):
         checks = samples @ polytope.A.T - b
         self.assertTrue(np.alltrue(checks < 0))
 
-    def test_timing(self):
+    def test_hitandrun_timing(self):
         """Test if we can get samples."""
         A = np.array([[1, 0],
                       [-1, 0],
