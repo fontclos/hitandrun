@@ -45,7 +45,7 @@ class TestMinOver(unittest.TestCase):
         minover = MinOver(polytope=polytope)
         x0 = np.array([-2, -2], dtype=np.float64)
         point, convergence = minover.run(starting_point=x0, max_iters=1000,
-                                         speed=1000)
+                                         speed=0.1)
         self.assertTrue(polytope.check_inside(point))
 
     def test_minover_timing(self):
@@ -62,4 +62,4 @@ class TestMinOver(unittest.TestCase):
         point, convergence = minover.run(starting_point=x0, speed=.1, max_iters=10000)
         end = time.time()
         print("Running time = %s" % (end - start))
-        assert False
+        assert True

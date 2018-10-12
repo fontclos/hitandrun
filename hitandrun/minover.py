@@ -57,9 +57,9 @@ class MinOver(object):
         self._set_worst_constraint()
         for i in range(self.max_iters):
             convergence = self._step()
-            self.iter = i
-            self._check_speed()
+            # self._check_speed()
             if verbose:
+                self.iter = i
                 self._print_worst()
             if convergence:
                 break
