@@ -59,7 +59,7 @@ class TestMinOver(unittest.TestCase):
         polytope = Polytope(A=A, b=b)
         minover = MinOver(polytope=polytope)
         start = time.time()
-        point, convergence = minover.run(starting_point=x0)
+        point, convergence = minover.run(starting_point=x0, speed=.1, max_iters=10000, verbose=True)
         end = time.time()
         print("Running time = %s" % (end - start))
         assert False

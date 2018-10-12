@@ -8,7 +8,6 @@ import numpy as np
 import numba
 
 
-# @numba.jitclass
 class MinOver(object):
     """MinOver solver."""
 
@@ -67,7 +66,10 @@ class MinOver(object):
         return self.current, convergence
 
     def _step(self):
-        self._move_towards_worst_plane()
+        new = _move_towards_worst_plane(current=self.current,
+                                        speed=self.speed,
+                                        plane=self.polytope.A[self.worst])
+        self.current = new
         self._set_worst_constraint()
         return np.all(self.distances < 0)
 
@@ -83,12 +85,14 @@ class MinOver(object):
         self.worst_indexes.append(self.worst)
         self.worst_distances.append(self.distances[self.worst])
 
-    def _move_towards_worst_plane(self):
-        self.current = self.current - self.speed * self.polytope.A[self.worst]
-
     def _print_worst(self):
         worst_distance = self.distances[self.worst]
         print("iter", self.iter,
               "index:", self.worst,
               "distance:", worst_distance,
               "speed:", self.speed)
+
+@numba.njit
+def _move_towards_worst_plane(current, speed, plane):
+    # self.current = self.current - self.speed * self.polytope.A[self.worst]
+    return current - speed * plane
