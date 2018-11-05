@@ -4,7 +4,6 @@ import unittest
 import numpy as np
 from hitandrun.polytope import Polytope
 from hitandrun.minover import MinOver
-import time
 
 
 class TestMinOver(unittest.TestCase):
@@ -47,19 +46,3 @@ class TestMinOver(unittest.TestCase):
         point, convergence = minover.run(starting_point=x0, max_iters=1000,
                                          speed=1000)
         self.assertTrue(polytope.check_inside(point))
-
-    def test_minover_timing(self):
-        """Test if we can get samples."""
-        A = np.array([[1, 0],
-                      [-1, 0],
-                      [0, 1],
-                      [0, -1]], dtype=np.float64)
-        b = np.array([1, 1, 1, 1], dtype=np.float64)
-        x0 = np.array([1000, 1000], dtype=np.float64)
-        polytope = Polytope(A=A, b=b)
-        minover = MinOver(polytope=polytope)
-        start = time.time()
-        point, convergence = minover.run(starting_point=x0, speed=.1, max_iters=10000)
-        end = time.time()
-        print("Running time = %s" % (end - start))
-        assert False
