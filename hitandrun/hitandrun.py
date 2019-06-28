@@ -7,6 +7,8 @@ Oct 2018
 import numpy as np
 from scipy.spatial.distance import norm
 
+import tqdm
+
 
 class HitAndRun(object):
     """Hit-and-run sampler."""
@@ -53,10 +55,13 @@ class HitAndRun(object):
             self.thin = thin
 
         # keep only one every thin
-        for i in range(self.n_samples * self.thin):
-            self._step()
-            if i % self.thin == 0:
-                self._add_current_to_samples()
+        for i in tqdm.tqdm(
+            range(self.n_samples),
+            desc="hit-and-run steps:"
+        ):
+            for _ in range(self.thin):
+                self._step()
+            self._add_current_to_samples()
         return np.array(self.samples)
 
     # private functions
