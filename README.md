@@ -1,5 +1,6 @@
 # Hit and Run
-[![DOI](https://zenodo.org/badge/152282588.svg)](https://zenodo.org/badge/latestdoi/152282588)
+[![DOI](https://zenodo.org/badge/152282588.svg)](https://zenodo.org/badge/latestdoi/152282588)  
+
 Python 3.6 implementation of the Hit-and-Run algorithm to uniformly sample convex polytopes.
 
 ## Contact
