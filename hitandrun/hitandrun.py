@@ -5,8 +5,7 @@ Francesc Font-Clos
 Oct 2018
 """
 import numpy as np
-from scipy.spatial.distance import norm
-from tqdm import tqdm
+from numpy.linalg import norm
 
 
 class HitAndRun:
@@ -66,7 +65,7 @@ class HitAndRun:
             self.thin = thin
 
         # keep only one every thin
-        for _ in tqdm(
+        for _ in _with_progress(
             range(self.n_samples),
             desc="hit-and-run steps:"
         ):
@@ -134,3 +133,12 @@ class HitAndRun:
 
     def _add_current_to_samples(self):
         self.samples.append(self.current.copy())
+
+
+def _with_progress(iterable, **kwargs):
+    """Wrap an iterable with tqdm when the optional dependency is installed."""
+    try:
+        from tqdm import tqdm
+    except ModuleNotFoundError:
+        return iterable
+    return tqdm(iterable, **kwargs)

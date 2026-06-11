@@ -10,8 +10,12 @@ polytopes in H-representation (`A x <= b`).
 python -m pip install .
 ```
 
-Runtime dependencies are declared in `pyproject.toml` and include NumPy, SciPy,
-and tqdm.
+Runtime dependencies are declared in `pyproject.toml`. The core package depends
+on NumPy; install the optional `progress` extra to show tqdm progress bars:
+
+```bash
+python -m pip install ".[progress]"
+```
 
 ## Usage
 
