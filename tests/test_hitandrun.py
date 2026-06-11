@@ -2,39 +2,34 @@
 
 import unittest
 import numpy as np
-from hitandrun.hitandrun import HitAndRun
-from hitandrun.polytope import Polytope
+from hitandrun import HitAndRun, Polytope
 
 
 class TestHitAndRun(unittest.TestCase):
     """Basic tests for hit and run."""
 
-    def test_hitandrun_instantiate(self):
-        """Test if HitAndRun object can be created."""
+    def setUp(self):
         A = np.array([[1, 0],
                       [-1, 0],
                       [0, 1],
                       [0, -1]], dtype=np.float64)
         b = np.array([1, 1, 1, 1], dtype=np.float64)
-        x0 = np.array([-.5, -.5], dtype=np.float64)
-        polytope = Polytope(A=A, b=b)
-        hitandrun = HitAndRun(polytope=polytope,
-                              starting_point=x0,
-                              thin=1.0,
+        self.starting_point = np.array([-.5, -.5], dtype=np.float64)
+        self.polytope = Polytope(A=A, b=b)
+
+    def test_hitandrun_instantiate(self):
+        """Test if HitAndRun object can be created."""
+        hitandrun = HitAndRun(polytope=self.polytope,
+                              starting_point=self.starting_point,
+                              thin=1,
                               n_samples=100
                               )
-        self.assertTrue(isinstance(hitandrun, HitAndRun))
+        self.assertIsInstance(hitandrun, HitAndRun)
 
     def test_hitandrun_sampling(self):
         """Test if we can get samples."""
-        A = np.array([[1, 0],
-                      [-1, 0],
-                      [0, 1],
-                      [0, -1]], dtype=np.float64)
-        b = np.array([1, 1, 1, 1], dtype=np.float64)
-        x0 = np.array([-.5, -.5], dtype=np.float64)
-        polytope = Polytope(A=A, b=b)
-        hitandrun = HitAndRun(polytope=polytope, starting_point=x0)
+        hitandrun = HitAndRun(polytope=self.polytope,
+                              starting_point=self.starting_point)
         samples = hitandrun.get_samples(n_samples=100)
-        checks = samples @ polytope.A.T - b
-        self.assertTrue(np.alltrue(checks < 0))
+        checks = samples @ self.polytope.A.T - self.polytope.b
+        self.assertTrue(np.all(checks < 0))

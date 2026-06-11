@@ -5,16 +5,14 @@ Francesc Font-Clos
 Oct 2018
 """
 import numpy as np
-from scipy.spatial.distance import norm
-
-import tqdm
+from numpy.linalg import norm
 
 
-class HitAndRun(object):
+class HitAndRun:
     """Hit-and-run sampler."""
 
     def __init__(self, polytope=None, starting_point=None,
-                 n_samples=100, thin=1):
+                 n_samples=100, thin=1, rng=None):
         """
         Create a hit-and-run sampler.
 
@@ -28,19 +26,31 @@ class HitAndRun(object):
             Number of desired samples.
         thin : int
             Thinning factor, increase to get independent samples.
+        rng : numpy.random.Generator, optional
+            Random number generator to use. Defaults to numpy's global
+            random module to preserve existing seeding behavior.
 
         """
         # make sure we got a point inside the polytope
-        assert starting_point is not None
-        assert len(starting_point) == polytope.dim
-        assert polytope.check_inside(starting_point)
+        if polytope is None:
+            raise ValueError("polytope must be provided.")
+        if starting_point is None:
+            raise ValueError("starting_point must be provided.")
+
+        starting_point = np.asarray(starting_point)
+
+        if len(starting_point) != polytope.dim:
+            raise ValueError("starting_point must match the polytope dimension.")
+        if not polytope.check_inside(starting_point):
+            raise ValueError("starting_point must be inside the polytope.")
 
         self.polytope = polytope
         self.starting_point = starting_point
         self.n_samples = n_samples
         self.thin = thin
+        self.rng = rng
         # place starting point as current point
-        self.current = starting_point
+        self.current = starting_point.copy()
         # set a starting random direction
         self._set_random_direction()
         # create empty list of samples
@@ -55,7 +65,7 @@ class HitAndRun(object):
             self.thin = thin
 
         # keep only one every thin
-        for i in tqdm.tqdm(
+        for _ in _with_progress(
             range(self.n_samples),
             desc="hit-and-run steps:"
         ):
@@ -75,11 +85,11 @@ class HitAndRun(object):
         try:
             lam_plus = np.min(self.lambdas[self.lambdas > 0])
             lam_minus = np.max(self.lambdas[self.lambdas < 0])
-        except(Exception):
-            raise RuntimeError("The current direction does not intersect"
-                               "any of the hyperplanes.")
+        except ValueError as exc:
+            raise RuntimeError("The current direction does not intersect "
+                               "any of the hyperplanes.") from exc
         # throw random point between lambdas
-        lam = np.random.uniform(low=lam_minus, high=lam_plus)
+        lam = self._uniform(low=lam_minus, high=lam_plus)
         # compute new point and add it
         new_point = self.current + lam * self.direction
         self.current = new_point
@@ -106,8 +116,29 @@ class HitAndRun(object):
 
     def _set_random_direction(self):
         """Set a unitary random direction in which to travel."""
-        direction = np.random.randn(self.polytope.dim)
+        direction = self._normal(size=self.polytope.dim)
         self.direction = direction / norm(direction)
 
+    def _uniform(self, low, high):
+        """Draw from a uniform distribution using the configured RNG."""
+        if self.rng is None:
+            return np.random.uniform(low=low, high=high)
+        return self.rng.uniform(low=low, high=high)
+
+    def _normal(self, size):
+        """Draw standard-normal values using the configured RNG."""
+        if self.rng is None:
+            return np.random.randn(size)
+        return self.rng.normal(size=size)
+
     def _add_current_to_samples(self):
-        self.samples.append(list(self.current))
+        self.samples.append(self.current.copy())
+
+
+def _with_progress(iterable, **kwargs):
+    """Wrap an iterable with tqdm when the optional dependency is installed."""
+    try:
+        from tqdm import tqdm
+    except ModuleNotFoundError:
+        return iterable
+    return tqdm(iterable, **kwargs)
