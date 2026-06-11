@@ -7,10 +7,10 @@ Oct 2018
 import numpy as np
 
 
-class MinOver(object):
+class MinOver:
     """MinOver solver."""
 
-    def __init__(self, polytope, ):
+    def __init__(self, polytope):
         """
         Create a MinOver solver.
 
@@ -32,7 +32,7 @@ class MinOver(object):
             Distance moved at each learning step
         max_iters: int
             Maximum number of iterations (per hyperplan).
-        starting_poin: np.array
+        starting_point: np.array
             Initial condition.
 
         Returns
@@ -45,15 +45,14 @@ class MinOver(object):
         """
         self.max_iters = max_iters * self.polytope.nplanes
         self.speed = speed
-        if starting_point is None:
-            self.current = np.zeros(self.polytope.dim)
-        else:
-            self.current = starting_point
+        self.current = (np.zeros(self.polytope.dim) if starting_point is None
+                        else np.asarray(starting_point))
         # compute step 0 worst planes
         # this is a trick to handle first steps
         self.worst_indexes = [-1, -2]
         self.worst_distances = [-1, -2]
         self._set_worst_constraint()
+        convergence = False
         for i in range(self.max_iters):
             convergence = self._step()
             self.iter = i
@@ -86,7 +85,7 @@ class MinOver(object):
 
     def _print_worst(self):
         worst_distance = self.distances[self.worst]
-        print("iter", self.iter,
-              "index:", self.worst,
-              "distance:", worst_distance,
-              "speed:", self.speed)
+        print(
+            f"iter {self.iter} index: {self.worst} "
+            f"distance: {worst_distance} speed: {self.speed}"
+        )
