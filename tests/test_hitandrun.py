@@ -33,3 +33,16 @@ class TestHitAndRun(unittest.TestCase):
         samples = hitandrun.get_samples(n_samples=100)
         checks = samples @ self.polytope.A.T - self.polytope.b
         self.assertTrue(np.all(checks < 0))
+
+    def test_find_lambdas_handles_parallel_planes(self):
+        """Test lambda computation for intersecting and parallel planes."""
+        hitandrun = HitAndRun(polytope=self.polytope,
+                              starting_point=np.zeros(2, dtype=np.float64))
+        hitandrun.current = np.zeros(2, dtype=np.float64)
+        hitandrun.direction = np.array([1, 0], dtype=np.float64)
+
+        hitandrun._find_lambdas()
+
+        expected = np.array([1, -1, np.nan, np.nan], dtype=np.float64)
+        self.assertTrue(np.allclose(hitandrun.lambdas[:2], expected[:2]))
+        self.assertTrue(np.all(np.isnan(hitandrun.lambdas[2:])))

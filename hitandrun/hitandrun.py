@@ -82,12 +82,13 @@ class HitAndRun:
         # find lambdas
         self._find_lambdas()
         # find smallest positive and negative lambdas
-        try:
-            lam_plus = np.min(self.lambdas[self.lambdas > 0])
-            lam_minus = np.max(self.lambdas[self.lambdas < 0])
-        except ValueError as exc:
+        positive_lambdas = self.lambdas[self.lambdas > 0]
+        negative_lambdas = self.lambdas[self.lambdas < 0]
+        if positive_lambdas.size == 0 or negative_lambdas.size == 0:
             raise RuntimeError("The current direction does not intersect "
-                               "any of the hyperplanes.") from exc
+                               "any of the hyperplanes.")
+        lam_plus = np.min(positive_lambdas)
+        lam_minus = np.max(negative_lambdas)
         # throw random point between lambdas
         lam = self._uniform(low=lam_minus, high=lam_plus)
         # compute new point and add it
@@ -103,16 +104,12 @@ class HitAndRun:
         reach a given hyperplane.
         """
         A = self.polytope.A
-        p = self.polytope.auxiliar_points
-
-        lambdas = []
-        for i in range(self.polytope.nplanes):
-            if np.isclose(self.direction @ A[i], 0):
-                lambdas.append(np.nan)
-            else:
-                lam = ((p[i] - self.current) @ A[i]) / (self.direction @ A[i])
-                lambdas.append(lam)
-        self.lambdas = np.array(lambdas)
+        numerators = self.polytope.b - A @ self.current
+        denominators = A @ self.direction
+        parallel = np.isclose(denominators, 0)
+        lambdas = np.full_like(numerators, np.nan, dtype=np.float64)
+        np.divide(numerators, denominators, out=lambdas, where=~parallel)
+        self.lambdas = lambdas
 
     def _set_random_direction(self):
         """Set a unitary random direction in which to travel."""
