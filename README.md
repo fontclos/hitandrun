@@ -1,8 +1,10 @@
 # Hit and Run
 [![DOI](https://zenodo.org/badge/152282588.svg)](https://zenodo.org/badge/latestdoi/152282588)  
 
-Python implementation of the Hit-and-Run algorithm to uniformly sample convex
-polytopes in H-representation (`A x <= b`).
+Small Python package for uniformly sampling convex polytopes with the
+Hit-and-Run algorithm. Polytopes are given in H-representation (`A x <= b`).
+
+Includes `Polytope` for constraints and `HitAndRun` for generating samples.
 
 ## Installation
 
