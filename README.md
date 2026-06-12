@@ -35,6 +35,17 @@ sampler = HitAndRun(polytope=polytope, starting_point=x0)
 samples = sampler.get_samples(n_samples=100)
 ```
 
+## Notebook
+
+See `notebooks/hitandrun_usage.ipynb` for a plotted walkthrough of defining a
+polytope, finding a feasible starting point with `MinOver`, sampling it with
+`HitAndRun`, and inspecting empirical marginals. The notebook uses Matplotlib
+for figures:
+
+```bash
+python -m pip install ".[progress]" matplotlib
+```
+
 ## Tests
 
 ```bash
