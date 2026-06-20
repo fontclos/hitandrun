@@ -7,6 +7,8 @@ Oct 2018
 import numpy as np
 from numpy.linalg import norm
 
+from hitandrun.minover import MinOver
+
 
 class HitAndRun:
     """Hit-and-run sampler."""
@@ -20,8 +22,9 @@ class HitAndRun:
         ----------
         polytope: hitandrun.polytope
             The convex polytope to be sampled.
-        starting_point: np.array
-            Initial condition. Must be inside the polytope.
+        starting_point: np.array, optional
+            Initial condition. Must be inside the polytope. If omitted, a
+            random feasible point is found with MinOver.
         n_samples: int
             Number of desired samples.
         thin : int
@@ -31,24 +34,25 @@ class HitAndRun:
             random module to preserve existing seeding behavior.
 
         """
-        # make sure we got a point inside the polytope
         if polytope is None:
             raise ValueError("polytope must be provided.")
-        if starting_point is None:
-            raise ValueError("starting_point must be provided.")
 
-        starting_point = np.asarray(starting_point)
+        self.polytope = polytope
+        self.n_samples = n_samples
+        self.thin = thin
+        self.rng = rng
+
+        if starting_point is None:
+            starting_point = self._find_random_starting_point()
+        else:
+            starting_point = np.asarray(starting_point)
 
         if len(starting_point) != polytope.dim:
             raise ValueError("starting_point must match the polytope dimension.")
         if not polytope.check_inside(starting_point):
             raise ValueError("starting_point must be inside the polytope.")
 
-        self.polytope = polytope
         self.starting_point = starting_point
-        self.n_samples = n_samples
-        self.thin = thin
-        self.rng = rng
         # place starting point as current point
         self.current = starting_point.copy()
         # set a starting random direction
@@ -75,6 +79,22 @@ class HitAndRun:
         return np.array(self.samples)
 
     # private functions
+    def _find_random_starting_point(self):
+        """
+        Find a feasible starting point from a random initial guess.
+
+        The point is intended as a valid initial condition for the Markov chain;
+        it is not a uniform draw from the polytope.
+        """
+        initial = self._normal(size=self.polytope.dim)
+        if self.polytope.check_inside(initial):
+            return initial
+
+        point, convergence = MinOver(self.polytope).run(starting_point=initial)
+        if not convergence:
+            raise ValueError("could not find a feasible starting_point.")
+        return point
+
     def _step(self):
         """Make one step."""
         # set random direction

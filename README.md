@@ -35,6 +35,17 @@ sampler = HitAndRun(polytope=polytope, starting_point=x0)
 samples = sampler.get_samples(n_samples=100)
 ```
 
+If you do not already have a feasible initial condition, omit
+`starting_point`. `HitAndRun` will draw a random initial guess and use `MinOver`
+to find a feasible point for the chain:
+
+```python
+sampler = HitAndRun(polytope=polytope, rng=np.random.default_rng(0))
+```
+
+This automatic starting point is feasible, but it is not a uniform sample from
+the polytope.
+
 ## Notebook
 
 See `notebooks/hitandrun_usage.ipynb` for a plotted walkthrough of defining a
